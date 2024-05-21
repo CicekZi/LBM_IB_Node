@@ -1,16 +1,16 @@
 clc;clear;close all;
-
+%GİTHUB DENEME1
 tic
 %Create a 3D domain
-xmax = 500;
-ymax = 500;
-zmax = 250;
+xmax = 50;
+ymax = 50;
+zmax = 50;
 x = -2:1:xmax+3;  % Define x coordinates
 y = -2:1:ymax+3;  % Define y coordinates
 z = -2:1:zmax+3;  % Define z coordinates
 dom_size = (length(x))*(length(y))*(length(y));
 grid_points = zeros((dom_size),3);
-RBLANK = ones(length(x),length(x),length(x));
+RBLANK = ones(length(x),length(y),length(z));
 % 0 solid
 % 1 fluid
 % 2 içteki yakın solid
@@ -43,7 +43,7 @@ disp('Domain grid is created.')
 % load("vertices_naca6409.mat")
 % load("tri_mesh_cell.mat") % loading tri_mesh_cell array contains each triangular surface mesh information
 % %load("vertices.mat")
-load('TRI_chord30.mat') % loading TRI structure that contains vertices and faces of solid
+load('TRI_sph_10.mat') % loading TRI structure that contains vertices and faces of solid
 translational_vector = min(TRI.vertices(:,:));
 TRI.vertices = TRI.vertices - translational_vector;
 
@@ -59,7 +59,7 @@ tri_mesh_array = tri_index_coord;
 closest_solid_grid = zeros(length(tri_mesh_array),3);
 closest_fluid_grid = zeros(length(tri_mesh_array),4);
 NUP = zeros(18,length(tri_mesh_array));
-NUP_tot = zeros(length(tri_mesh_array),1);
+NUP_TOT = zeros(length(tri_mesh_array),1);
 DELTA = zeros(18,length(tri_mesh_array));
 dir_vec = (1:18)';
 search_R = 1;
@@ -178,10 +178,13 @@ for i=1:length(tri_mesh_array)
     dir_col = zeros(18,1);
     dir_col(1:length(dir_info)) = dir_info;
     NUP(:,i) = dir_col;
-    NUP_tot(i) = sum(idx);
-
+    NUP_TOT(i) = sum(idx);
     % DELTA array generator
     DELTA(:,i) = fluid_to_bound_dist_org .* idx;
+    [row_size, ~] = size(closest_solid_grid);
+    NCURV = row_size;
+
+
 
     %idx = fluid_to_bound_dist < sqrt(2);
 
@@ -213,11 +216,14 @@ solid_grid_points = grid_points_cube(solid_grid_idx,:);
 solid_grid_idx_3d = solid_grid_points + 3;
 closest_solid_grid_idx_3d = closest_solid_grid + 3;
 
-for i=1:length(solid_grid_points(:,1))
-    RBLANK(solid_grid_idx_3d(i,1), solid_grid_idx_3d(i,1), solid_grid_idx_3d(i,1)) = 0;
-    RBLANK(closest_solid_grid_idx_3d(i,1), closest_solid_grid_idx_3d(i,1), closest_solid_grid_idx_3d(i,1)) = 2;
+for i=1:length(solid_grid_idx_3d(:,1))
+    RBLANK(solid_grid_idx_3d(i,1), solid_grid_idx_3d(i,2), solid_grid_idx_3d(i,3)) = 0;
+%     RBLANK(closest_solid_grid_idx_3d(i,1), closest_solid_grid_idx_3d(i,1), closest_solid_grid_idx_3d(i,1)) = 2;
 end
 
+for i= 1:length(closest_solid_grid_idx_3d(:,1))
+    RBLANK(closest_solid_grid_idx_3d(i,1), closest_solid_grid_idx_3d(i,2), closest_solid_grid_idx_3d(i,3))=2;
+end
 % boundary correction
 for i=1:xmax
     for k=1:zmax
@@ -225,8 +231,8 @@ for i=1:xmax
         RBLANK(i,ymax+2,k) = RBLANK(i,ymax,k);
         RBLANK(i,ymax+3,k) = RBLANK(i,ymax,k);
 
-        RBLANK(i,0,k) = RBLANK(i,1,k);
-        RBLANK(i,-1,k) = RBLANK(i,1,k);
+        RBLANK(i,2,k) = RBLANK(i,1,k);
+        RBLANK(i,1,k) = RBLANK(i,1,k);
     end
 end
 
@@ -239,6 +245,8 @@ end
 toc
 disp('All Domain Nodes is labeled as fluid/solid.')
 
+
+
 %% Plot option
 ds = 1000;
 %grid_points_ds =  grid_points(1:ds:length(grid_points),1:ds:length(grid_points),1:ds:length(grid_points));
@@ -246,17 +254,18 @@ ds = 1000;
 %hold on
 
 % Plotting surface mesh vertices
-%plot3(TRI.vertices(:,1),TRI.vertices(:,2),TRI.vertices(:,3),'.g',MarkerSize=5)
+% plot3(TRI.vertices(:,1),TRI.vertices(:,2),TRI.vertices(:,3),'.g',MarkerSize=5)
 
 % Plotting closest solid nodes
-% figure(1)
-% plot3(closest_solid_grid(:,1),closest_solid_grid(:,2),closest_solid_grid(:,3),'c.','MarkerSize',10)
-% daspect([1 1 1])
+figure(1)
+plot3(closest_solid_grid(:,1),closest_solid_grid(:,2),closest_solid_grid(:,3),'c.','MarkerSize',10)
+daspect([1 1 1])
+hold on 
 
 % Plotting closest fluid nodes
 % figure(2)
-% plot3(closest_fluid_grid(:,1),closest_fluid_grid(:,2),closest_fluid_grid(:,3),'m.','MarkerSize',10)
-% daspect([1 1 1])
+plot3(closest_fluid_grid(:,1),closest_fluid_grid(:,2),closest_fluid_grid(:,3),'m.','MarkerSize',10)
+daspect([1 1 1])
 
 % % Plotting for all inner solid nodes
 % figure(1)
@@ -265,9 +274,18 @@ ds = 1000;
 % pt = inner_grid_points;
 % daspect([1 1 1])
 % plot3(pt(:,1), pt(:,2), pt(:,3),'.m')
-% % xlim([0 100])
-% % ylim([0 1000])
-% % zlim([0 100])
+% xlim([0 100])
+% ylim([0 100])
+% zlim([0 100])
 
+%% SAVE
+
+save("IJK.mat","IJK")
+save("RBLANK.mat","RBLANK")
+save("DELTA.mat","DELTA")
+save("D.mat","DELTA")
+save("NCURV.mat","NCURV")
+save("NUP.mat","NUP")
+save("NUP_TOT.mat","NUP_TOT")
 
 

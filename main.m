@@ -2,9 +2,9 @@ clc;clear;close all;
 %GİTHUB DENEME1
 tic
 %Create a 3D domain
-xmax = 300;
-ymax = 300;
-zmax = 200;
+xmax = 50;
+ymax = 50;
+zmax = 50;
 x = -2:1:xmax+3;  % Define x coordinates
 y = -2:1:ymax+3;  % Define y coordinates
 z = -2:1:zmax+3;  % Define z coordinates
@@ -43,10 +43,9 @@ disp('Domain grid is created.')
 % load("vertices_naca6409.mat")
 % load("tri_mesh_cell.mat") % loading tri_mesh_cell array contains each triangular surface mesh information
 % %load("vertices.mat")
-load('TRI_sphere_30dia.mat') % loading TRI structure that contains vertices and faces of solid
+load('TRI_sph_10.mat') % loading TRI structure that contains vertices and faces of solid
 translational_vector = min(TRI.vertices(:,:));
-TRI.vertices = TRI.vertices - translational_vector+[100 150 100];
-
+TRI.vertices = TRI.vertices - translational_vector+[20 20 20];
 % Tri_index_coord cell array generator
 tri_index_coord=cell(1,4);
 for i = 1:length(TRI.faces(:,1))
@@ -254,7 +253,7 @@ ds = 1000;
 %hold on
 
 % Plotting surface mesh vertices
-plot3(TRI.vertices(:,1),TRI.vertices(:,2),TRI.vertices(:,3),'.g',MarkerSize=5)
+% plot3(TRI.vertices(:,1),TRI.vertices(:,2),TRI.vertices(:,3),'.g',MarkerSize=5)
 
 % Plotting closest solid nodes
 figure(1)
@@ -269,14 +268,14 @@ daspect([1 1 1])
 
 % % Plotting for all inner solid nodes
 % figure(1)
-plot3(TRI.vertices(:,1), TRI.vertices(:,2),TRI.vertices(:,3),'.')
+% plot3(TRI.vertices(:,1), TRI.vertices(:,2),TRI.vertices(:,3),'.')
 % hold on
 % pt = inner_grid_points;
 % daspect([1 1 1])
 % plot3(pt(:,1), pt(:,2), pt(:,3),'.m')
-xlim([0 300])
-ylim([0 300])
-zlim([0 200])
+xlim([0 50])
+ylim([0 50])
+zlim([0 50])
 
 %% SAVE
 
@@ -289,3 +288,48 @@ save("NUP.mat","NUP")
 save("NUP_TOT.mat","NUP_TOT")
 
 
+%% PLOTTING RBLANK
+
+
+% Sample 3D array
+array3D = randi([0, 2], [5, 5, 5]); % Example: a 5x5x5 array with values 0, 1, or 2
+
+% Create a figure
+% figure;
+% hold on;
+
+% Get the dimensions of the array
+[xDim, yDim, zDim] = size(RBLANK);
+
+% Loop through each element in the 3D array
+for x = 1:xDim
+    for y = 1:yDim
+        for z = 1:zDim
+            if RBLANK(x, y, z) == 0
+                plot3(x, y, z, 'm.', 'MarkerSize', 20); % Magenta point
+                hold on
+            elseif RBLANK(x, y, z) == 2
+                plot3(x, y, z, 'c.', 'MarkerSize', 20); % Cyan point
+                hold on
+            end
+            % Do nothing for zero
+        end
+    end
+end
+
+% Set plot labels and title
+xlabel('X-axis');
+ylabel('Y-axis');
+zlabel('Z-axis');
+title('3D Point Plot from 3D Array');
+
+% % Set axis limits
+% xlim([1 xDim]);
+% ylim([1 yDim]);
+% zlim([1 zDim]);
+
+% Enable grid
+grid on;
+
+% % Hold off to stop adding to the current plot
+% hold off;
