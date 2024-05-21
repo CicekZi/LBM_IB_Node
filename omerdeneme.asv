@@ -1,0 +1,141 @@
+clc;clear;close all;
+
+%Create a 3D domain
+dom_size = 150;
+x = linspace(0, dom_size, dom_size+1); % Define x coordinates
+y = linspace(0, dom_size, dom_size+1);   % Define y coordinates
+z = linspace(0, dom_size, dom_size+1);   % Define z coordinates
+grid_points = zeros((dom_size+1)^3,3);
+
+c = 1;
+for i=1:dom_size+1
+    for j=1:dom_size+1
+        for k=1:dom_size+1 
+            grid_points(c,:) = [x(i) y(j) z(k)];
+            c = c +1;
+        end
+    end
+end
+
+
+
+%[X, Y, Z] = meshgrid(x, y, z); % Create a mesh grid
+% 
+%  scatter3(X(:), Y(:) ,Z(:), 1, 'b', 'filled');
+%  % 
+%  % for i=0:dom_size
+%  %    for j=0:dom_size
+%  %        for k=0:dom_size
+
+% figure(1)
+% model = femodel(Geometry="Part1.stl");
+% mesh = generateMesh(model,"GeometricOrder","quadratic");
+% pdemesh(mesh)
+% alpha(0.1);
+
+% % TR = stlread('Part1.stl');
+% % trisurf(TR)
+% 
+% [F, V] = stlread('Part1.stl')
+
+
+%%
+%contains every triangular surface mesh 3 points as cell array NX3
+% tri_mesh_array = 31;
+% tri_N = 100;
+% tri_mesh_array_pts = (5)*rand(tri_N,9);
+% norm_of = zeros(tri_N,1);
+% 
+% tri_mesh_array(:,1) = mat2cell(tri_mesh_array_pts(:,1:3),[ones(1,tri_N)],[3]);
+% tri_mesh_array(:,2) = mat2cell(tri_mesh_array_pts(:,4:6),[ones(1,tri_N)],[3]);
+% tri_mesh_array(:,3) = mat2cell(tri_mesh_array_pts(:,7:9),[ones(1,tri_N)],[3]);
+% tri_mesh_array(:,end+1) = num2cell(norm_of);
+
+load("tri_mesh_cell.mat")
+load("vertices.mat")
+tri_mesh_array = tri_index_coord;
+
+
+search_R = 1;
+nearest_grid = zeros(1,3);
+
+% ref point is an arbitrary point inside the boundary solid shape
+% this will be used for finding real triangular surface norm direction
+ref_point = [60 60 60];
+
+%finding each triangular mesh surface norrm direction
+
+for i=1:length(tri_mesh_array)
+    tic
+
+    %center_point = mean(tri_mesh_array(i,3)+ tri_mesh_array(i,2) + tri_mesh_array(i,1));
+    center_point = (tri_mesh_array{i,1}+ tri_mesh_array{i,2} + tri_mesh_array{i,3}) / 3;
+
+    vec1 = tri_mesh_array{i,3} - center_point;
+    vec2 = tri_mesh_array{i,2} - center_point;
+    norm_vector = cross(vec1,vec2);
+    tri_mesh_array{i,end} = norm_vector/norm(norm_vector);
+
+    triangleToRefpoint_vec = ref_point - center_point;
+    triangleToRefpoint_vec = triangleToRefpoint_vec/norm(triangleToRefpoint_vec);
+
+    % finding angle between candidate norm vector and reference vector 
+    angle = acos(dot(tri_mesh_array{i,end},triangleToRefpoint_vec));
+
+    % correction of norm vector based on comparison with inner point
+    if angle < pi/2
+        tri_mesh_array{i,end} = -tri_mesh_array{i,end};
+    end
+
+    % Search algorithm through every triangular surface normal
+    xyz_max = center_point + 1*search_R;
+    xyz_min = center_point - 1*search_R;
+
+    % statement_x = (grid_points(:,1) <= xyz_max(1)) & (grid_points(:,1) >= xyz_min(1));
+    % statement_y = (grid_points(:,2) <= xyz_max(2)) & (grid_points(:,2) >= xyz_min(2));
+    % statement_z = (grid_points(:,3) <= xyz_max(3)) & (grid_points(:,3) >= xyz_min(3));
+    % condition = statement_x & statement_y & statement_z;
+    bound_max = floor(center_point+1);
+    %bound_min = ceil(center_point-1);
+    bound_min = bound_max-1;
+    boundcube = [
+                 bound_max; 
+                 bound_max(1) bound_max(2) bound_max(3)-1  ;
+                 bound_max(1)-1 bound_max(2) bound_max(3)  ;
+                 bound_max(1)-1 bound_max(2) bound_max(3)-1;
+                 bound_min
+                 bound_min(1) bound_min(2) bound_min(3)+1  ;
+                 bound_min(1)+1 bound_min(2) bound_min(3)  ;
+                 bound_min(1)+1 bound_min(2) bound_min(3)+1
+                 ];
+
+    % storing every point that is near to triangular
+    %candidate_grid_point = grid_points(condition,:);
+    candidate_grid_point= boundcube;
+
+    % eliminite inner point relative triangular surface normal
+    candidate_grid_point_rel_tri = candidate_grid_point - center_point;
+    % normalize the vectors
+    candidate_grid_point_rel_tri_norm = candidate_grid_point_rel_tri ./ vecnorm(candidate_grid_point_rel_tri,2,2);
+
+    % finding angle between candidate tri_to_grid vector and normal vector 
+    % dot product formula is used in below
+    angle = acos(sum(tri_mesh_array{i,end} .* candidate_grid_point_rel_tri_norm,2));
+    idx = angle < pi/2;
+    candidate_grid_point_rel_tri = candidate_grid_point_rel_tri(idx,:);
+    candidate_grid_point = candidate_grid_point(idx,:);
+
+    % find nearest grid point to triangular
+    [~ , idx] = min(vecnorm(candidate_grid_point_rel_tri,2,2));
+    nearest_grid = [nearest_grid ; candidate_grid_point(idx,:)];
+end
+
+
+%% Plot option
+ds = 1000;
+grid_points_ds =  grid_points(1:ds:length(grid_points),:);
+plot3(grid_points_ds(:,1),grid_points_ds(:,2),grid_points_ds(:,3),'.',MarkerSize=1)
+hold on
+%plot3(vertices(:,1),vertices(:,2),vertices(:,3),'.g')
+plot3(nearest_grid(:,1),nearest_grid(:,2),nearest_grid(:,3),'m.','MarkerSize',10)
+
