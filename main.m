@@ -273,19 +273,11 @@ daspect([1 1 1])
 % pt = inner_grid_points;
 % daspect([1 1 1])
 % plot3(pt(:,1), pt(:,2), pt(:,3),'.m')
-xlim([0 50])
-ylim([0 50])
-zlim([0 50])
+% xlim([0 50])
+% ylim([0 50])
+% zlim([0 50])
 
-%% SAVE
 
-save("IJK.mat","IJK")
-save("RBLANK.mat","RBLANK")
-save("DELTA.mat","DELTA")
-save("D.mat","DELTA")
-save("NCURV.mat","NCURV")
-save("NUP.mat","NUP")
-save("NUP_TOT.mat","NUP_TOT")
 
 
 %% PLOTTING RBLANK
@@ -324,12 +316,21 @@ zlabel('Z-axis');
 title('3D Point Plot from 3D Array');
 
 % % Set axis limits
-% xlim([1 xDim]);
-% ylim([1 yDim]);
-% zlim([1 zDim]);
+ xlim([1 xDim]);
+ylim([1 yDim]);
+ zlim([1 zDim]);
 
 % Enable grid
 grid on;
 
 % % Hold off to stop adding to the current plot
 % hold off;
+%% SAVE
+
+save("IJK.mat","IJK")
+save("RBLANK.mat","RBLANK")
+save("DELTA.mat","DELTA")
+save("D.mat","DELTA")
+save("NCURV.mat","NCURV")
+save("NUP.mat","NUP")
+save("NUP_TOT.mat","NUP_TOT")
