@@ -296,6 +296,8 @@ daspect([1 1 1])
 for x = 1:xDim
     for y = 1:yDim
         for z = 1:zDim
+         
+            
             if RBLANK(x, y, z) == 0
                 plot3(x, y, z, 'm.', 'MarkerSize', 20); % Magenta point
                 hold on
