@@ -45,7 +45,8 @@ disp('Domain grid is created.')
 % %load("vertices.mat")
 load('TRI_sph_25.mat') % loading TRI structure that contains vertices and faces of solid
 translational_vector = min(TRI.vertices(:,:));
-TRI.vertices = TRI.vertices - translational_vector+[132.5 53 53];
+TRI.vertices = TRI.vertices - translational_vector+[132.5-13.1284  ,53- 12.5169-6   53-12.4406-6];
+%[132.5-13.1284  ,53- 12.5169   53-12.4406]
 % Tri_index_coord cell array generator
 tri_index_coord=cell(1,4);
 for i = 1:length(TRI.faces(:,1))
@@ -317,9 +318,9 @@ zlabel('Z-axis');
 title('3D Point Plot from 3D Array');
 
 % Set axis limits
- xlim([1 xDim]);
-ylim([1 yDim]);
- zlim([1 zDim]);
+ xlim([1 390]);
+ylim([1 100]);
+ zlim([1 100]);
 % daspect([1 1 1])
 
 % Enable grid
