@@ -297,6 +297,8 @@ array3D = randi([0, 2], [5, 5, 5]); % Example: a 5x5x5 array with values 0, 1, o
 for x = 1:xDim
     for y = 1:yDim
         for z = 1:zDim
+         
+            
             if RBLANK(x, y, z) == 0
                 plot3(x, y, z, 'm.', 'MarkerSize', 20); % Magenta point
                 hold on
