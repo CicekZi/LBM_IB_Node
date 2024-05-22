@@ -2,9 +2,9 @@ clc;clear;close all;
 %GİTHUB DENEME1
 tic
 %Create a 3D domain
-xmax = 50;
-ymax = 50;
-zmax = 50;
+xmax = 390;
+ymax = 100;
+zmax = 100;
 x = -2:1:xmax+3;  % Define x coordinates
 y = -2:1:ymax+3;  % Define y coordinates
 z = -2:1:zmax+3;  % Define z coordinates
@@ -43,9 +43,9 @@ disp('Domain grid is created.')
 % load("vertices_naca6409.mat")
 % load("tri_mesh_cell.mat") % loading tri_mesh_cell array contains each triangular surface mesh information
 % %load("vertices.mat")
-load('TRI_sph_10.mat') % loading TRI structure that contains vertices and faces of solid
+load('TRI_sph_25.mat') % loading TRI structure that contains vertices and faces of solid
 translational_vector = min(TRI.vertices(:,:));
-TRI.vertices = TRI.vertices - translational_vector+[20 20 20];
+TRI.vertices = TRI.vertices - translational_vector+[132.5 53 53];
 % Tri_index_coord cell array generator
 tri_index_coord=cell(1,4);
 for i = 1:length(TRI.faces(:,1))
@@ -283,8 +283,7 @@ daspect([1 1 1])
 %% PLOTTING RBLANK
 
 
-% Sample 3D array
-array3D = randi([0, 2], [5, 5, 5]); % Example: a 5x5x5 array with values 0, 1, or 2
+
 
 % Create a figure
 % figure;
@@ -315,10 +314,11 @@ ylabel('Y-axis');
 zlabel('Z-axis');
 title('3D Point Plot from 3D Array');
 
-% % Set axis limits
+% Set axis limits
  xlim([1 xDim]);
 ylim([1 yDim]);
  zlim([1 zDim]);
+% daspect([1 1 1])
 
 % Enable grid
 grid on;
