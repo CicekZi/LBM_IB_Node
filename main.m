@@ -247,10 +247,10 @@ disp('All Domain Nodes is labeled as fluid/solid.')
 
 
 %% Plot option
-ds = 1000;
-%grid_points_ds =  grid_points(1:ds:length(grid_points),1:ds:length(grid_points),1:ds:length(grid_points));
-%plot3(grid_points_ds(:,1),grid_points_ds(:,2),grid_points_ds(:,3),'.',MarkerSize=1)
-%hold on
+ ds = 1000;
+% grid_points_ds =  grid_points(1:ds:length(grid_points),1:ds:length(grid_points),1:ds:length(grid_points));
+% plot3(downsample(grid_points_ds(:,1)),downsample(grid_points_ds(:,2)),downsample(grid_points_ds(:,3)),'.',MarkerSize=1)
+% hold on
 
 % Plotting surface mesh vertices
 % plot3(TRI.vertices(:,1),TRI.vertices(:,2),TRI.vertices(:,3),'.g',MarkerSize=5)
@@ -296,10 +296,10 @@ for x = 1:xDim
          
             
             if RBLANK(x, y, z) == 0
-                plot3(x, y, z, 'm.', 'MarkerSize', 20); % Magenta point
+                plot3(x, y, z, 'm.', 'MarkerSize', 10); % Magenta point
                 hold on
             elseif RBLANK(x, y, z) == 2
-                plot3(x, y, z, 'c.', 'MarkerSize', 20); % Cyan point
+                plot3(x, y, z, 'c.', 'MarkerSize', 10); % Cyan point
                 hold on
             end
             % Do nothing for zero
@@ -308,16 +308,17 @@ for x = 1:xDim
 end
 
 % Set plot labels and title
-xlabel('X-axis');
-ylabel('Y-axis');
-zlabel('Z-axis');
-title('3D Point Plot from 3D Array');
+xlabel('X','Interpreter','latex','FontSize',12);
+ylabel('Y','Interpreter','latex','FontSize',12);
+zlabel('Z','Interpreter','latex','FontSize',12);
+legend("Solid Nodes","Solid Boundary Nodes","Interpreter","latex")
+% title('3D Point Plot from 3D Array');
 
 % Set axis limits
- xlim([1 400]);
-ylim([1 200]);
- zlim([1 200]);
-% daspect([1 1 1])
+%  xlim([1 400]);
+% ylim([1 200]);
+%  zlim([1 200]);
+daspect([1 1 1])
 
 % Enable grid
 grid on;
