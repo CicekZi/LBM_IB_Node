@@ -42,10 +42,11 @@ disp('Domain grid is created.')
 % load("vertices_naca6409.mat")
 % load("tri_mesh_cell.mat") % loading tri_mesh_cell array contains each triangular surface mesh information
 % %load("vertices.mat")
-load('TRI_sph_40.mat') % loading TRI structure that contains vertices and faces of solid
+load('TRI_turb.mat') % loading TRI structure that contains vertices and faces of solid
 translational_vector = min(TRI.vertices(:,:));
-TRI.vertices = TRI.vertices - translational_vector+[150-21.3961  ,100- 19.7524-6   100-19.9857-6];
+TRI.vertices = TRI.vertices - translational_vector+[132.5  ,53,53];
 %[132.5-13.1284  ,53- 12.5169   53-12.4406]
+%+[150-21.3961  ,100- 19.7524-6   100-19.9857-6]
 % Tri_index_coord cell array generator
 tri_index_coord=cell(1,4);
 for i = 1:length(TRI.faces(:,1))
@@ -315,10 +316,10 @@ legend("Solid Nodes","Solid Boundary Nodes","Interpreter","latex")
 % title('3D Point Plot from 3D Array');
 
 % Set axis limits
-%  xlim([1 400]);
-% ylim([1 200]);
-%  zlim([1 200]);
-daspect([1 1 1])
+ xlim([1 400]);
+ylim([1 200]);
+ zlim([1 200]);
+% daspect([1 1 1])
 
 % Enable grid
 grid on;
