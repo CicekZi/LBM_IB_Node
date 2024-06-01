@@ -334,9 +334,9 @@ legend("Solid Nodes","Solid Boundary Nodes","Interpreter","latex")
 % title('3D Point Plot from 3D Array');
 
 % Set axis limits
- xlim([1 200]);
-ylim([1 200]);
- zlim([1 200]);
+ xlim([1 2000]);
+ylim([1 5]);
+ zlim([1 1000]);
 % daspect([1 1 1])
 
 % Enable grid
