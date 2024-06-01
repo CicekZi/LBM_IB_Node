@@ -2,7 +2,7 @@ clc;clear;close all;
 tic
 %Create a 3D domain
 xmax = 2000;
-ymax = 2;
+ymax = 4;
 zmax = 1000;
 x = -2:1:xmax+3;  % Define x coordinates
 y = -2:1:ymax+3;  % Define y coordinates
@@ -13,22 +13,24 @@ RBLANK = ones(length(x),length(y),length(z));
 % 0 solid
 % 1 fluid
 % 2 içteki yakın solid
+grid_points = zeros(dom_size, 3);
 
-% c = 1;
-% for i=1:length(x)
-%    for j=1:length(y)
-%         for k=1:length(z)
-%             grid_points(c,:) = [x(i) y(j) z(k)];
-%             c = c +1;
-%        end
-%    end
+c = 1;
+for i=1:length(x)
+   for j=1:length(y)
+        for k=1:length(z)
+            grid_points(c,:) = [x(i) y(j) z(k)];
+            c = c +1;
+       end
+   end
 
-% end
+end
 
 
 toc
 disp('Domain grid is created.')
 %%
+
 tic
 % Create a 3D domain
 xmax = 2000;
@@ -38,11 +40,30 @@ x = -2:1:xmax+3;  % Define x coordinates
 y = -2:1:ymax+3;  % Define y coordinates
 z = -2:1:zmax+3;  % Define z coordinates
 
-[X, Y, Z] = ndgrid(x, y, z);  % Create 3D grid
-grid_points = [X(:), Y(:), Z(:)];  % Flatten the grid to a list of points
+% Precompute sizes
+nx = length(x);
+ny = length(y);
+nz = length(z);
+dom_size = nx * ny * nz;
+
+% Preallocate the grid_points array
+grid_points = zeros(dom_size, 3);
+c = 1;
+RBLANK = ones(length(x),length(y),length(z));
+
+% Precompute the grid points using nested loops
+for i = 1:nx
+    for j = 1:ny
+        for k = 1:nz
+            grid_points(c, :) = [x(i), y(j), z(k)];
+            c = c + 1;
+        end
+    end
+end
 
 toc
 disp('Domain grid is created.')
+
 
 %%
 %contains every triangular surface mesh 3 points as cell array NX3
@@ -62,7 +83,7 @@ disp('Domain grid is created.')
 % %load("vertices.mat")
 load('TRI_n0012_10p.mat') % loading TRI structure that contains vertices and faces of solid
 translational_vector = min(TRI.vertices(:,:));
-TRI.vertices = TRI.vertices - translational_vector+[132.5  ,53,53];
+TRI.vertices = TRI.vertices - translational_vector+[450  ,0   ,500];
 %[132.5-13.1284  ,53- 12.5169   53-12.4406]
 %+[150-21.3961  ,100- 19.7524-6   100-19.9857-6]
 % Tri_index_coord cell array generator
@@ -236,12 +257,13 @@ closest_solid_grid_idx_3d = closest_solid_grid + 3;
 
 for i=1:length(solid_grid_idx_3d(:,1))
     RBLANK(solid_grid_idx_3d(i,1), solid_grid_idx_3d(i,2), solid_grid_idx_3d(i,3)) = 0;
-%     RBLANK(closest_solid_grid_idx_3d(i,1), closest_solid_grid_idx_3d(i,1), closest_solid_grid_idx_3d(i,1)) = 2;
 end
 
 for i= 1:length(closest_solid_grid_idx_3d(:,1))
     RBLANK(closest_solid_grid_idx_3d(i,1), closest_solid_grid_idx_3d(i,2), closest_solid_grid_idx_3d(i,3))=2;
 end
+
+
 % boundary correction
 for i=1:xmax
     for k=1:zmax
@@ -262,7 +284,10 @@ end
 % RBLANK(ismember(grid_points,closest_fluid_grid(:,1:3),'rows')) = 2;
 toc
 disp('All Domain Nodes is labeled as fluid/solid.')
-
+disp(size(grid_points));
+disp(size(grid_points_cube));
+disp(size(solid_grid_points));
+disp(size(RBLANK));
 
 
 %% Plot option
@@ -292,9 +317,9 @@ daspect([1 1 1])
 % pt = inner_grid_points;
 % daspect([1 1 1])
 % plot3(pt(:,1), pt(:,2), pt(:,3),'.m')
-% xlim([0 50])
-% ylim([0 50])
-% zlim([0 50])
+xlim([0 2000])
+ylim([0 5])
+zlim([0 1000])
 
 
 
@@ -334,9 +359,9 @@ legend("Solid Nodes","Solid Boundary Nodes","Interpreter","latex")
 % title('3D Point Plot from 3D Array');
 
 % Set axis limits
- xlim([1 200]);
-ylim([1 200]);
- zlim([1 200]);
+ xlim([1 2000]);
+ylim([1 10]);
+ zlim([1 1000]);
 % daspect([1 1 1])
 
 % Enable grid
@@ -353,3 +378,7 @@ save("D.mat","DELTA")
 save("NCURV.mat","NCURV")
 save("NUP.mat","NUP")
 save("NUP_TOT.mat","NUP_TOT")
+
+%%
+
+save('RBLANK2.mat', 'RBLANK', '-v7.3')
