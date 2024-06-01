@@ -1,9 +1,9 @@
 clc;clear;close all;
 tic
 %Create a 3D domain
-xmax = 400;
-ymax = 200;
-zmax = 200;
+xmax = 2000;
+ymax = 2;
+zmax = 1000;
 x = -2:1:xmax+3;  % Define x coordinates
 y = -2:1:ymax+3;  % Define y coordinates
 z = -2:1:zmax+3;  % Define z coordinates
@@ -14,15 +14,18 @@ RBLANK = ones(length(x),length(y),length(z));
 % 1 fluid
 % 2 içteki yakın solid
 
-c = 1;
-for i=1:x(end)
-    for j=1:y(end)
-        for k=1:z(end)
-            grid_points(c,:) = [x(i) y(j) z(k)];
-            c = c +1;
-        end
-    end
-end
+% c = 1;
+% for i=1:length(x)
+%    for j=1:length(y)
+%         for k=1:length(z)
+%             grid_points(c,:) = [x(i) y(j) z(k)];
+%             c = c +1;
+%        end
+%    end
+
+% end
+
+
 toc
 disp('Domain grid is created.')
 
@@ -42,7 +45,7 @@ disp('Domain grid is created.')
 % load("vertices_naca6409.mat")
 % load("tri_mesh_cell.mat") % loading tri_mesh_cell array contains each triangular surface mesh information
 % %load("vertices.mat")
-load('TRI_turb.mat') % loading TRI structure that contains vertices and faces of solid
+load('TRI_n0012_10p.mat') % loading TRI structure that contains vertices and faces of solid
 translational_vector = min(TRI.vertices(:,:));
 TRI.vertices = TRI.vertices - translational_vector+[132.5  ,53,53];
 %[132.5-13.1284  ,53- 12.5169   53-12.4406]
