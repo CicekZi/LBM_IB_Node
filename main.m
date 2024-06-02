@@ -30,11 +30,12 @@ end
 toc
 disp('Domain grid is created.')
 %%
+clc;clear;close all;
 
 tic
 % Create a 3D domain
 xmax = 2000;
-ymax = 2;
+ymax = 15;
 zmax = 1000;
 x = -2:1:xmax+3;  % Define x coordinates
 y = -2:1:ymax+3;  % Define y coordinates
@@ -81,9 +82,9 @@ disp('Domain grid is created.')
 % load("vertices_naca6409.mat")
 % load("tri_mesh_cell.mat") % loading tri_mesh_cell array contains each triangular surface mesh information
 % %load("vertices.mat")
-load('TRI_n0012_10p.mat') % loading TRI structure that contains vertices and faces of solid
+load('TRI_n0012_10p_4s.mat') % loading TRI structure that contains vertices and faces of solid
 translational_vector = min(TRI.vertices(:,:));
-TRI.vertices = TRI.vertices - translational_vector+[450  ,0   ,500];
+TRI.vertices = TRI.vertices - translational_vector+[450  ,7.5   ,500];
 %[132.5-13.1284  ,53- 12.5169   53-12.4406]
 %+[150-21.3961  ,100- 19.7524-6   100-19.9857-6]
 % Tri_index_coord cell array generator
@@ -317,9 +318,9 @@ daspect([1 1 1])
 % pt = inner_grid_points;
 % daspect([1 1 1])
 % plot3(pt(:,1), pt(:,2), pt(:,3),'.m')
-xlim([0 2000])
-ylim([0 5])
-zlim([0 1000])
+xlim([0 550])
+ylim([0 150])
+zlim([0 550])
 
 
 
@@ -359,9 +360,9 @@ legend("Solid Nodes","Solid Boundary Nodes","Interpreter","latex")
 % title('3D Point Plot from 3D Array');
 
 % Set axis limits
- xlim([1 2000]);
-ylim([1 10]);
- zlim([1 1000]);
+ xlim([1 2050]);
+ylim([1 30]);
+ zlim([1 1050]);
 % daspect([1 1 1])
 
 % Enable grid
